@@ -14,7 +14,7 @@ import (
 func main() {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: "41ef6dfed5be4bcb3e93f61313a72fd2c9546ad0"},
+		&oauth2.Token{AccessToken: "REPLACEME"},
 	)
 	tc := oauth2.NewClient(ctx, ts)
 
@@ -22,7 +22,7 @@ func main() {
 
 	// list all repositories for the authenticated user
 
-	language := "rust"
+	language := "ruby"
 
 	rs, err := getRepos(ctx, client, language)
 	if err != nil {
