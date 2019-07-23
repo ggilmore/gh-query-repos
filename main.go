@@ -14,7 +14,7 @@ import (
 func main() {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: "REPLACEME"},
+		&oauth2.Token{AccessToken: "REPLACE_ME"},
 	)
 	tc := oauth2.NewClient(ctx, ts)
 
@@ -22,24 +22,72 @@ func main() {
 
 	// list all repositories for the authenticated user
 
-	language := "ruby"
-
-	rs, err := getRepos(ctx, client, language)
-	if err != nil {
-		log.Fatalf("error when fetching repos, err: %q", err)
+	languages := []string{
+		"c",
+		"cpp",
+		"css",
+		"html",
+		"php",
+		"scala",
+		"csharp",
+		"swift",
+		"go",
+		"rust",
+		"python",
+		"ruby",
+		"java",
+		"javascript",
+		"typescript",
+		"shell",
+		"ocaml",
+		"clojure",
+		"kotlin",
+		"julia",
+		"elixir",
+		"erlang",
+		"haskell",
+		"r",
+		"perl",
+		"lua",
+		"matlab",
 	}
 
-	names := []string{}
-	for _, r := range rs {
-		names = append(names, *r.FullName)
+	repoMap := map[string][]string{}
+
+	for _, language := range languages {
+		rs, err := getRepos(ctx, client, language)
+		if err != nil {
+			log.Fatalf("error when fetching repos, err: %q", err)
+		}
+
+		names := []string{}
+		for _, r := range rs {
+			names = append(names, *r.FullName)
+		}
+
+		repoMap[language] = names
+
 	}
 
-	file, err := json.MarshalIndent(names, "", " ")
+	file, err := json.MarshalIndent(repoMap, "", " ")
 	if err != nil {
 		log.Fatalf("error when marshalling json, err: %q", err)
 	}
 
-	err = ioutil.WriteFile(fmt.Sprintf("%s.json", language), file, 0644)
+	err = ioutil.WriteFile("repos.json", file, 0644)
+	if err != nil {
+		log.Fatalf("error when writing json file, err: %q", err)
+	}
+
+}
+
+func writeRepos(fileName string, repoNames []string) {
+	file, err := json.MarshalIndent(repoNames, "", " ")
+	if err != nil {
+		log.Fatalf("error when marshalling json, err: %q", err)
+	}
+
+	err = ioutil.WriteFile(fmt.Sprintf("%s.json", fileName), file, 0644)
 	if err != nil {
 		log.Fatalf("error when writing json file, err: %q", err)
 	}
@@ -56,7 +104,7 @@ func getRepos(ctx context.Context, c *github.Client, language string) ([]github.
 	}
 
 	for {
-		if len(allRepos) >= 800 {
+		if len(allRepos) >= 1000 {
 			return allRepos, nil
 		}
 
